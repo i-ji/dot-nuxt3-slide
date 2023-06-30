@@ -4,11 +4,9 @@
   </div>
   <Button @prev="displayPrev" @next="displayNext" />
   <Thumbnail
-    @slidePic0="displayPic0"
+    @slidePic="displayPic"
     :togglePic0="activePic0"
-    @slidePic1="displayPic1"
     :togglePic1="activePic1"
-    @slidePic2="displayPic2"
     :togglePic2="activePic2"
   />
 </template>
@@ -18,64 +16,73 @@ import { ref } from "vue";
 const activePic0 = ref(true);
 const activePic1 = ref(false);
 const activePic2 = ref(false);
-const picture = ref("../assets/pic0.png");
+const pictures = ref([
+  "../assets/pic0.png",
+  "../assets/pic1.png",
+  "../assets/pic2.png",
+]);
+let picture = ref(pictures.value[0]);
+let currentPic = ref(0);
 
-// サムネイル処理
-const displayPic0 = () => {
-  picture.value = "../assets/pic0.png";
+// アクティブクラスの真偽
+const pic0 = () => {
   activePic0.value = true;
   activePic1.value = false;
   activePic2.value = false;
 };
-const displayPic1 = () => {
-  picture.value = "../assets/pic1.png";
+
+const pic1 = () => {
   activePic0.value = false;
   activePic1.value = true;
   activePic2.value = false;
 };
-const displayPic2 = () => {
-  picture.value = "../assets/pic2.png";
+const pic2 = () => {
   activePic0.value = false;
   activePic1.value = false;
   activePic2.value = true;
 };
 
+// サムネイル処理
+const displayPic = (index) => {
+  picture.value = pictures.value[index];
+  currentPic.value = index;
+  if (index === 0) {
+    pic0();
+  } else if (index === 1) {
+    pic1();
+  } else if (index === 2) {
+    pic2();
+  }
+};
+
 // ボタン処理
 const displayPrev = () => {
+  currentPic.value--;
+  if (currentPic.value < 0) {
+    currentPic.value = 2;
+  }
+  picture.value = pictures.value[currentPic.value];
   if (activePic0.value) {
-    picture.value = "../assets/pic2.png";
-    activePic0.value = false;
-    activePic1.value = false;
-    activePic2.value = true;
+    pic2();
   } else if (activePic1.value) {
-    picture.value = "../assets/pic0.png";
-    activePic0.value = true;
-    activePic1.value = false;
-    activePic2.value = false;
+    pic0();
   } else if (activePic2.value) {
-    picture.value = "../assets/pic1.png";
-    activePic0.value = false;
-    activePic1.value = true;
-    activePic2.value = false;
+    pic1();
   }
 };
 
 const displayNext = () => {
+  currentPic.value++;
+  if (currentPic.value > 2) {
+    currentPic.value = 0;
+  }
+  picture.value = pictures.value[currentPic.value];
   if (activePic0.value) {
-    picture.value = "../assets/pic1.png";
-    activePic0.value = false;
-    activePic1.value = true;
-    activePic2.value = false;
+    pic1();
   } else if (activePic1.value) {
-    picture.value = "../assets/pic2.png";
-    activePic0.value = false;
-    activePic1.value = false;
-    activePic2.value = true;
+    pic2();
   } else if (activePic2.value) {
-    picture.value = "../assets/pic0.png";
-    activePic0.value = true;
-    activePic1.value = false;
-    activePic2.value = false;
+    pic0();
   }
 };
 </script>
